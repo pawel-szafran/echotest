@@ -7,12 +7,12 @@ import (
 	. "github.com/labstack/echo/test"
 )
 
-type Errorer interface {
+type errorer interface {
 	Errorf(format string, args ...interface{})
 }
 
 type RespAsserter struct {
-	errorer Errorer
+	errorer errorer
 	resp    *ResponseRecorder
 }
 

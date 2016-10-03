@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	ContentType     = "Content-Type"
-	ApplicationJSON = "application/json"
+	contentType     = "Content-Type"
+	applicationJSON = "application/json"
 )
 
 type Resp struct {
@@ -31,7 +31,7 @@ func Get(e *echo.Echo, url string) Resp {
 
 func PostJson(e *echo.Echo, url, body string) Resp {
 	req := NewRequest("POST", url, strings.NewReader(body))
-	req.Header().Set(ContentType, ApplicationJSON)
+	req.Header().Set(contentType, applicationJSON)
 	return Call(e, req)
 }
 

@@ -45,8 +45,8 @@ func TestPostJson(t *testing.T) {
 	e := echo.New()
 	e.Post(url, func(c echo.Context) error {
 		assertReqBody(t, c.Request(), strings.NewReader(body))
-		if ct := c.Request().Header().Get(ContentType); ct != ApplicationJSON {
-			t.Errorf("Want %s %q, got %q", ContentType, ApplicationJSON, ct)
+		if ct := c.Request().Header().Get(contentType); ct != applicationJSON {
+			t.Errorf("Want %s %q, got %q", contentType, applicationJSON, ct)
 		}
 		return c.String(status, body)
 	})
