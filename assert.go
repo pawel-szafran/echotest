@@ -26,7 +26,7 @@ func (r RespAsserter) StatusIs(status int) RespAsserter {
 func (r RespAsserter) BodyAsJsonIs(body string) RespAsserter {
 	gotBody := r.resp.Body.String()
 	if !reflect.DeepEqual(asJson(gotBody), asJson(body)) {
-		r.errorer.Errorf("Want JSON '%s', got '%s'", body, gotBody)
+		r.errorer.Errorf("Want JSON %q, got %q", body, gotBody)
 	}
 	return r
 }

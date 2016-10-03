@@ -25,11 +25,17 @@ func TestStatusIs(t *testing.T) {
 	)
 	errorer := RegisterNewErrorer(t)
 	resp.WriteHeader(status1)
-	respAsserter.StatusIs(status1)
-	errorer.AssertError(false, "same status")
-	respAsserter.StatusIs(status2)
-	errorer.AssertError(true, "different status")
-	assertFluent(t, respAsserter.StatusIs(status1))
+	t.Run("same status", func(t *testing.T) {
+		respAsserter.StatusIs(status1)
+		errorer.AssertNoError()
+	})
+	t.Run("different status", func(t *testing.T) {
+		respAsserter.StatusIs(status2)
+		errorer.AssertError()
+	})
+	t.Run("fluent", func(t *testing.T) {
+		assertFluent(t, respAsserter.StatusIs(status1))
+	})
 }
 
 func TestBodyAsJsonIs(t *testing.T) {
@@ -40,13 +46,21 @@ func TestBodyAsJsonIs(t *testing.T) {
 	)
 	errorer := RegisterNewErrorer(t)
 	resp.Body = bytes.NewBufferString(json1)
-	respAsserter.BodyAsJsonIs(json1)
-	errorer.AssertError(false, "same JSON")
-	respAsserter.BodyAsJsonIs(json1withExtraSpaces)
-	errorer.AssertError(false, "same JSON with extra spaces")
-	respAsserter.BodyAsJsonIs(json2)
-	errorer.AssertError(true, "different JSON")
-	assertFluent(t, respAsserter.BodyAsJsonIs(json1))
+	t.Run("same JSON", func(t *testing.T) {
+		respAsserter.BodyAsJsonIs(json1)
+		errorer.AssertNoError()
+	})
+	t.Run("same JSON with extra spaces", func(t *testing.T) {
+		respAsserter.BodyAsJsonIs(json1withExtraSpaces)
+		errorer.AssertNoError()
+	})
+	t.Run("different JSON", func(t *testing.T) {
+		respAsserter.BodyAsJsonIs(json2)
+		errorer.AssertError()
+	})
+	t.Run("fluent", func(t *testing.T) {
+		assertFluent(t, respAsserter.BodyAsJsonIs(json1))
+	})
 }
 
 func RegisterNewErrorer(t *testing.T) (errorer *fakeErrorer) {
@@ -63,9 +77,16 @@ func (e *fakeErrorer) Errorf(format string, args ...interface{}) {
 	e.error = true
 }
 
-func (e *fakeErrorer) AssertError(error bool, comment string) {
-	if e.error != error {
-		e.t.Errorf("Want error=%v for %s", error, comment)
+func (e *fakeErrorer) AssertError() {
+	if e.error == false {
+		e.t.Errorf("Want error")
+	}
+	e.error = false
+}
+
+func (e *fakeErrorer) AssertNoError() {
+	if e.error == true {
+		e.t.Errorf("Want no error")
 	}
 	e.error = false
 }
